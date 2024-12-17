@@ -1,4 +1,4 @@
-# Data Portfolia
+# Data Portfolio
 
 
 This is my portfolia website
