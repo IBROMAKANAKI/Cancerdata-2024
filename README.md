@@ -687,6 +687,89 @@ Here are the key questions we need to answer:
 | High | Prostate           | November 2023 (683)         |
 | low  | Nasal cavity, sinuses and larynx | May 2020 (60) |
 
+# R For Time series analysis
+
+### 1. Date column and value column
+```R
+data$Date <- as.Date(data$Date, format="%Y-%m-%d")
+
+data_ts <- ts(data$Cancer_diagnoses, start=c(2018, 1), frequency=12)
+```
+
+### 2. Check for stationarity (important for ARIMA)
+```R
+adf_result <- adf.test(data_ts)
+adf_result$p.value
+
+plot(data_ts)
+```
+![P_value](assets/images/P value.png)
+
+### 3. Differencing if necessary to make the series stationary. This is often done if the Augmented Dickey-Fuller test suggests non-stationarity
+```R
+data_ts_diff <- diff(data_ts)
+
+plot(data_ts_diff)
+```
+![Date trend](assets/images/Differencing in trend.png)
+
+### 4. Fit an ARIMA model to the data, Automatically selects the best ARIMA model
+```R
+model <- auto.arima(data_ts)
+```
+
+### 5. View the ARIMA model summary
+```R
+summary(model)
+```
+![Summary](assets/images/Summary.png)
+
+### 6. Forecast future values - Forecast the next 12 periods (e.g., 12 months if monthly data)
+```R
+forecast_values <- forecast(model, h=12)
+
+- Plot the forecast
+plot(forecast_values)
+
+- Print the forecasted values
+print(forecast_values)
+```
+![Arima Forecast](assets/images/Arima Forecast.jpg)
+
+### 7. Get residuals of the ARIMA model
+```R
+
+residuals <- residuals(arima_model)
+
+- Plot residuals to visually inspect
+plot(residuals, main="Residuals from ARIMA Model", ylab="Residuals", xlab="Time")
+
+- Assuming the ARIMA model is stored in 'model'
+residuals <- residuals(model)  # Extract residuals from the fitted ARIMA model
+
+- Plot residuals to visually inspect
+plot(residuals, main="Residuals from ARIMA Model", ylab="Residuals", xlab="Time")
+```
+![Residual](assets/images/Residual.jpg)
+
+### 8. Perform the Shapiro-Wilk test for normality of residuals
+```R
+shapiro_test <- shapiro.test(residuals)
+print(shapiro_test)
+```
+![Shapiro_test](assets/images/P_value.jpg)
+
+### 9. Forecast future values using the correct model object
+```R
+forecast_values <- forecast(model, h=12)
+
+- Step 9: Plot the forecasted values
+plot(forecast_values)
+
+- Print the forecasted values
+print(forecast_values)
+```
+
 
 
 
