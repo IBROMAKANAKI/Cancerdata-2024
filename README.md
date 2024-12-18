@@ -169,3 +169,167 @@ In this phase, Excel is used for Exploratory Data Analysis (EDA) to assess and c
 4. Metric: Describes the statistical measurement of cancer diagnoses (observed) with just one records for each value.
 
 5. Statistic: Numeric values representing the actual cancer diagnoses from 0 to 30216.
+
+## Data cleaning 
+
+- The aim is to refine our dataset to ensure it is structured and ready for analysis. 
+
+The cleaned data should meet the following criteria and constraints:
+
+- Only relevant columns should be retained.
+- All data types should be appropriate for the contents of each column.
+- No column should contain null values, indicating complete data for all records.
+
+Below is a table outlining the constraints on our cleaned dataset:
+
+| Property | Description |
+| --- | --- |
+| Number of Rows |134380 |
+| Number of Columns | 8 |
+
+Here is a tabular representation of the expected schema for the clean data:
+
+| Column Name | Data Type | Nullable |
+| --- | --- | --- |
+| Geography type| VARCHAR | NO |
+| Geography| VARCHAR | NO |
+| Year| VARCHAR | NO |
+| Month | VARCHAR | NO |
+| Date | VARCHAR | NO |
+| Cancer group | VARCHAR | NO |
+|  Metric | VARCHAR | NO |
+| Statistic| INTEGER | NO |
+
+- What steps are needed to clean and shape the data into the desired format?
+
+1. Remove Unnecessary Columns: Remove irrelevant columns such as Year, Month, and Metric to focus on critical data.
+2. Filter Data for East of England: Extract data specific to the East of England region from the geography column (Geography_type, Geography, Date, Cancer_group and Statistic).
+3. Format Date Column: Ensure the Date column is in the appropriate date format for consistent analysis (year-month-day=yy/mm/dd).
+4. Remove Outliers: Exclude the outlier 'ALL SITES COMBINED' from the Cancer Group column to prevent skewed results.
+5. Rename Columns: Rename Geography to Region and Statistic to Cancer_Diagnoses for clarity.
+6. View: Create a view so the that can be pushed to power bi.
+
+
+### Transform the data 
+
+
+```sql
+SELECT 
+    Geography_Type,
+    Geography AS Region, -- Rename Geography to Region
+    CONVERT(DATE, Date, 103) AS Date, -- Format the Date column to proper date format
+    Cancer_Group,
+    Statistic AS Cancer_Diagnoses     -- Rename Statistic to Cancer_Diagnoses
+FROM 
+    NHS_CANCER
+WHERE 
+    Geography = 'East of England'
+    AND Cancer_Group != 'All sites combined';
+```
+
+
+### Create the SQL view 
+
+```sql
+/*
+#1. REMOVE UNNECESSARY COLUMNS (YEAR, MONTH, MATRIC) BY ONLY SELECTING THE ONE WE NEED.
+
+#2. EXTRACT DATA OF EAST OF ENGLAND FROM THE GEOGRAPHY COLUMN.
+
+#3. Format the date column to the appropreate format
+
+#4. REMOVING THE OUTLIER (ALL SITES COMBINED) from Cancer_group 
+
+#5. RENAME THE COLUMN SUCH AS GEOGRAPHY TO REGION AND STATISTIC TO CANCER_DIAGNOSES
+*/
+
+-- 1.
+Create View for Importation to PowerBi
+
+CREATE VIEW NHS_DATA AS
+
+-- 2.
+SELECT 
+    Geography_Type,
+    Geography AS Region, -- Rename Geography to Region
+    CONVERT(DATE, Date, 103) AS Date, -- Format the Date column to proper date format
+    Cancer_Group,
+    Statistic AS Cancer_Diagnoses     -- Rename Statistic to Cancer_Diagnoses
+-- 3.
+FROM 
+    NHS_CANCER
+WHERE 
+    Geography = 'East of England'
+    AND Cancer_Group != 'All sites combined';
+
+```
+ ![Data Cleaning](assets/images/Cleaning data.jpg)
+
+ # Testing 
+
+- Data quality and validation checks
+
+Here are the data quality tests conducted:
+
+1. Row count check
+
+2. Column count check (5)
+
+3. Data typle check (string format, data format and numerical)
+
+4. Duplicate count check ( each records must be unique in the dataset)
+
+5.  Check for Null or Empty Values
+
+6. Outliers check
+
+## EXPECTATION
+
+Row count < 134380 
+
+Column count = 5
+
+Geography_Type = varchar
+
+Region = varchar
+
+Date = Date format
+
+Cancer_Group = varchar
+
+Cancer_Diagnoses = Numerical/Integer
+
+Duplicate = 0
+
+Null value or empty check = 0
+
+### Row count check
+```sql
+/*
+# Rows count check
+*/
+
+Select COUNT(*) AS NO_Of_Rows
+from NHS_DATA;
+
+```
+
+## Column count check
+### SQL query 
+```sql
+/*
+# Columns count check
+*/
+
+
+Select 
+   COUNT (*) AS column_count 
+From 
+   INFORMATION_SCHEMA.COLUMNS
+WHERE 
+   TABLE_NAME = 'NHS_DATA';
+```
+### Output 
+![Row and column count check](assets/images/Cleaning data.jpg)
+
+
