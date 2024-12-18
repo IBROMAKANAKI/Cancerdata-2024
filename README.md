@@ -774,7 +774,7 @@ print(forecast_values)
 
 # Conclusion and Recommendation
 
-##Observations from the Graphs
+## Observations from the Graphs
 
 There is a decline in diagnoses in 2020 visible in both moving averages. This could be linked to the global impact of the COVID-19 pandemic, which disrupted healthcare services, causing fewer screenings and diagnoses. After 2020, the charts suggest a recovery trend, with diagnosis rates increasing in both short and long terms, indicating a resumption of healthcare activities. The 3-month moving average shows seasonal variability, with some months experiencing higher rates of diagnoses than others. The 12-month moving average points to an overall stable or slightly increasing trend post-2020, suggesting improvements in cancer diagnosis rates over time.
 
