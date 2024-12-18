@@ -321,7 +321,6 @@ from NHS_DATA;
 # Columns count check
 */
 
-
 Select 
    COUNT (*) AS column_count 
 From 
@@ -330,6 +329,162 @@ WHERE
    TABLE_NAME = 'NHS_DATA';
 ```
 ### Output 
-![Row and column count check](assets/images/Cleaning data.jpg)
+![Row and column count check](assets/images/count after cleaning - Copy.jpg)
 
+
+## Data type check
+### SQL query 
+```sql
+/*
+# Check the data types of each column from the view by checking the INFORMATION SCHEMA view
+*/
+
+-- 1.
+Select *
+From 
+   INFORMATION_SCHEMA.COLUMNS
+WHERE 
+   TABLE_NAME = 'NHS_DATA';
+
+Select 
+   COLUMN_NAME,
+   DATA_TYPE
+From 
+   INFORMATION_SCHEMA.COLUMNS
+WHERE 
+   TABLE_NAME = 'NHS_DATA'
+```
+### Output
+![Data type check](assets/images/DATA TYPE AND COLUMN NAME - Copy.jpg)
+
+
+## Duplicate count check
+### SQL query 
+```sql
+/*
+# 1. Check for duplicate rows in the view
+# 2. Group by the Geography_Type, Region, Date, Cancer_Group, Cancer_Diagnoses.
+# 3. Filter for groups with more than one row
+*/
+
+-- 1.
+SELECT 
+    COUNT(*) AS Total_Duplicates
+FROM (SELECT Geography_Type, Region, Date, 
+      Cancer_Group, Cancer_Diagnoses,
+        COUNT(*) AS Duplicate_Count
+    FROM 
+        NHS_DATA
+-- 2.
+GROUP BY 
+        Geography_Type, Region, Date,
+        Cancer_Group, Cancer_Diagnoses
+-- 3.
+HAVING 
+        COUNT(*) > 1 -- Identifies duplicates
+) AS Duplicates;
+```
+### Output
+![Duplicate count check](assets/images/DUPLICATE CHECK.jpg)
+
+
+## Null value or empty check
+### SQL query 
+```sql
+/*
+# 1. Check empty roll value in the view
+# 2. Base on each of the column
+*/
+
+-- 1.
+SELECT 
+    COUNT(*) AS Total_Empty_Or_Null_Values
+FROM 
+    NHS_DATA
+-- 2.
+WHERE 
+    Geography_Type IS NULL OR Geography_Type = ''
+    OR Region IS NULL OR Region = ''
+    OR Date IS NULL OR Date = ''
+    OR Cancer_Group IS NULL OR Cancer_Group = ''
+    OR Cancer_Diagnoses IS NULL OR Cancer_Diagnoses = '';
+```
+### Output
+![Null value or empty check](assets/images/Toatal null or empty.jpg)
+
+
+## Outliers check
+### SQL query 
+```sql
+/*
+# 1. Calculate Q1, Q3, and IQR for each Cancer_Group.
+# 2. Find the outlier in the Cancer_diagnoses column.
+# 3. The outlier must not affect the analysis
+*/
+
+-- 1.
+WITH Quartiles AS (
+    SELECT 
+        Cancer_Group,
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY Cancer_Diagnoses) 
+            OVER (PARTITION BY Cancer_Group) AS Q1,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY Cancer_Diagnoses) 
+            OVER (PARTITION BY Cancer_Group) AS Q3
+    FROM NHS_DATA
+),
+-- 2.
+IQR_Calculation AS (
+    SELECT DISTINCT 
+        Cancer_Group,
+        Q1,
+        Q3,
+        (Q3 - Q1) AS IQR,
+        (Q1 - 1.5 * (Q3 - Q1)) AS Lower_Bound,
+        (Q3 + 1.5 * (Q3 - Q1)) AS Upper_Bound
+    FROM Quartiles
+),
+-- 3.
+Outlier_Flagged AS (
+    SELECT 
+        d.Cancer_Group,
+        d.Cancer_Diagnoses,
+        i.Lower_Bound,
+        i.Upper_Bound,
+        CASE 
+            WHEN d.Cancer_Diagnoses < i.Lower_Bound OR d.Cancer_Diagnoses > i.Upper_Bound THEN 1
+            ELSE 0
+        END AS Is_Outlier
+    FROM NHS_DATA d
+    JOIN IQR_Calculation i
+    ON d.Cancer_Group = i.Cancer_Group
+)
+-- 4.
+Display records with outlier flag, bounds, and actual outlier values
+SELECT 
+    Cancer_Group,
+    Cancer_Diagnoses,
+    Lower_Bound,
+    Upper_Bound,
+    CASE 
+        WHEN Is_Outlier = 1 THEN Cancer_Diagnoses
+        ELSE NULL
+    END AS Outlier_Value,
+    Is_Outlier
+FROM Outlier_Flagged
+ORDER BY Cancer_Group, Cancer_Diagnoses;
+```
+### Output
+![outliers](assets/images/Outlier.png)
+
+# Visualization 
+
+
+## Results
+
+
+![pbit of Power BI Dashboard](assets/images/Cancer Incidence in the east of land.pbit)
+
+![Dashboard](assets/images/assets/images/Dashboard.png)
+
+This shows the Cancer Incidence trend in the east of england. 
 
