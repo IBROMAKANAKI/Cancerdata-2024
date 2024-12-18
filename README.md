@@ -484,7 +484,209 @@ ORDER BY Cancer_Group, Cancer_Diagnoses;
 
 ![pbit of Power BI Dashboard](assets/images/Cancer Incidence in the east of land.pbit)
 
-![Dashboard](assets/images/assets/images/Dashboard.png)
+![Dashboard](assets/images/Dashboard.png)
 
 This shows the Cancer Incidence trend in the east of england. 
+
+## DAX Measures
+
+### 1. Total cancer Diagnoses 
+```DAX
+Total Cancer Diagnoses = 
+SUM(NHS_DATA[Cancer_Diagnoses])
+
+```
+
+### 2. Total number of cancer type
+```DAX
+Total No of Cancer Types = 
+VAR TotalCancer = DISTINCTCOUNT(NHS_DATA[Cancer_Group])
+RETURN TotalCancer
+
+```
+
+### 3. Total number of days
+```DAX
+Total Number of Days = 
+DISTINCTCOUNT(NHS_DATA[Date])
+
+```
+
+### 4. Average cancer diagnoses
+```Dax
+Average Cancer Diagnoses = 
+AVERAGE(NHS_DATA[Cancer_Diagnoses])
+
+```
+
+### 5. Cancer group with the lowest diagnoses
+```Dax
+CancerGroupLowestDiagnoses = 
+VAR MinValue = MIN(NHS_DATA[Cancer_diagnoses])
+RETURN
+CALCULATE(
+    FIRSTNONBLANK(NHS_DATA[Cancer_group], 1),
+    NHS_DATA[Cancer_diagnoses] = MinValue
+)
+
+```
+
+### 6. Cancer group with the Highest diagnoses
+```DAX
+CancerGroupHighestDiagnoses = 
+VAR MaxValue = [MaxDiagnoses]
+RETURN
+CALCULATE(
+    FIRSTNONBLANK(NHS_DATA[Cancer_group], 1),
+    NHS_DATA[Cancer_diagnoses] = MaxValue
+)
+
+```
+
+### 7. Month year with highest diagnoses
+```DAX
+MonthYearHighestDiagnoses = 
+VAR MaxValue = [MaxDiagnoses]
+RETURN
+CALCULATE(
+    FORMAT(MAX(NHS_DATA[Date]), "MMMM YYYY"),
+    FILTER(NHS_DATA, NHS_DATA[Cancer_diagnoses] = MaxValue)
+)
+
+
+```
+
+### 8. Month year with lowest diagnoses
+```DAX
+MonthYearLowestDiagnoses = 
+VAR MinValue = MIN(NHS_DATA[Cancer_diagnoses])
+RETURN
+CALCULATE(
+    FORMAT(SELECTEDVALUE(NHS_DATA[Date]), "MMMM YYYY"),
+    NHS_DATA[Cancer_diagnoses] = MinValue
+)
+
+```
+
+### 9. Percentage by cancer type
+```DAX
+Percentage by Cancer Type = 
+DIVIDE(
+    SUM(NHS_DATA[Cancer_Diagnoses]),
+    CALCULATE(SUM(NHS_DATA[Cancer_Diagnoses]), ALL(NHS_DATA[Cancer_group])),
+    0
+)
+
+```
+
+### 10. Region diagnoses rate
+```DAX
+Region Diagnoses Rate = 
+DIVIDE(
+    SUM(NHS_DATA[Cancer_Diagnoses]),
+    CALCULATE(SUM(NHS_DATA[Cancer_Diagnoses]), ALLEXCEPT(NHS_DATA, NHS_DATA[Region]))
+) * 100
+
+```
+
+### 11. 12_Month moving average
+```DAX
+12_Month_Moving_Average = 
+AVERAGEX(
+    DATESINPERIOD(
+        NHS_DATA[Date], 
+        LASTDATE(NHS_DATA[Date]), 
+        -12, 
+        MONTH
+    ),
+    SUM(NHS_DATA[Cancer_Diagnoses])
+)
+
+```
+
+### 12. 3_Month moving average
+```DAX
+3-Month Moving Average = 
+AVERAGEX(
+    DATESINPERIOD(
+        NHS_DATA[Date],
+        LASTDATE(NHS_DATA[Date]),
+        -3,
+        MONTH
+    ),
+    SUM(NHS_DATA[Cancer_Diagnoses])
+)
+
+```
+# Analysis 
+
+## Findings
+ 
+Here are the key questions we need to answer:
+
+1. Who are the top 10 cancer groups?
+2. Which 3 cancer groups have the most Statistic (Cancer diagnoses)?
+3. Which 3 cancer groups have the highest average Statistic (Cancer diagnoses)?
+4. Which 3 cancer groups have the highest percentage by cancer type?
+5. Which 3 cancer groups have the highest Region diagnosis rate?
+6. Cancer group moving average (3 and 12) to see the trend relating to the date.
+7. Time series analysis (Arima Model), Forecasting, Residue and P-value.
+
+
+### 1. Who are the top 10 cancer groups? and 2. Which 3 cancer groups have the most Statistic (Cancer diagnoses)?
+
+
+| Rank | Cancer Groups        | Total Cancer Diagnoses |
+|------|----------------------|-----------------|
+| 1    | Prostate             | 37,874           |
+| 2    | Breast               | 36,877           |
+| 3    | Colorectal           | 29,681           |
+| 4    | Lung                 | 28,489           |
+| 5    | Haematological       | 20,019           |
+| 6    | Urological exl prostate | 17,893        |
+| 7    | Gynaecological       | 13,977           |
+| 8    | Upper GI excl OG     | 13,968           |
+| 9    | Melanoma             | 11,416           |
+| 10   | Oesophago-gastric    | 9,390            |
+
+
+### 3. Which 3 cancer groups have the highest average Statistic (Cancer diagnoses)?
+
+
+| Rank | Cancer Group    | Average Cancer Diagnoses |
+|------|-----------------|-----------------|
+| 1    | Prostate      | 479.42          |
+| 2    | Breast        | 466.80          |
+| 3    | Colorectal    | 375.71          |
+
+
+
+### 4. Which 3 cancer groups have the highest percentage by cancer type?
+
+
+| Rank | Cancer Group | Percentage by Cancer type |
+|------|--------------|-----------------|
+| 1    | Prostate       | 12%           |
+| 2    | Breast         | 12%           |
+| 3    | Colorectal     | 9%            |
+
+
+### 5. Which 3 cancer groups have the highest Region diagnosis rate?
+
+| Cancer Group | Region Diagnoses Rate |
+|--------------|-----------------|
+| Prostate     | 12.04           |
+| Breast       | 11.72           |
+| Colorectal   | 9.43            |
+
+
+### 6. Which cancer groups has the highest and lowest diagnoses and their date
+
+| Rank | Cancer Group       | Date & Max/min diagnoses    |
+|------|-----------------   |---------------------------- |
+| High | Prostate           | November 2023 (683)         |
+| low  | Nasal cavity, sinuses and larynx | May 2020 (60) |
+
+
+
 
