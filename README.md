@@ -1,4 +1,5 @@
 # Data Portfolio: Excel --> SQL --> Power --> R (Interview Task)	
+# Presented by SALAWUDEEN IBRAHIM
 
 ## Cancer incidence (diagnoses) in the East of England
 
@@ -769,6 +770,66 @@ plot(forecast_values)
 - Print the forecasted values
 print(forecast_values)
 ```
+
+
+# Conclusion and Recommendation
+
+##Observations from the Graphs
+
+There is a decline in diagnoses in 2020 visible in both moving averages. This could be linked to the global impact of the COVID-19 pandemic, which disrupted healthcare services, causing fewer screenings and diagnoses. After 2020, the charts suggest a recovery trend, with diagnosis rates increasing in both short and long terms, indicating a resumption of healthcare activities. The 3-month moving average shows seasonal variability, with some months experiencing higher rates of diagnoses than others. The 12-month moving average points to an overall stable or slightly increasing trend post-2020, suggesting improvements in cancer diagnosis rates over time.
+
+p-value from the Augmented Dickey-Fuller (ADF) test is 0.01. Since your p-value (0.01) is less than 0.05 (the common significance level), reject the null hypothesis. This means that there is strong evidence to suggest that the time series is stationary. A p-value of 0.01 indicates that the time series is likely stationary and does not have a unit root. This is a good result, as stationarity is typically a necessary assumption for models like ARIMA.
+
+The forecast suggests that the values in the future will likely follow a similar pattern to the historical data, but the variability in the forecast increases with time, especially in the distant future (shown by the wider confidence intervals). The model has captured the seasonality well, as reflected in the oscillations of the forecast aligned with the seasonal patterns in the data. The high volatility (spikes) in the forecast toward the end of the series may indicate unusual events or outliers that the model has trouble predicting precisely.
+
+## Structure and Behavior of Residuals:
+The residuals appear to fluctuate around a mean of approximately zero, which is desirable in a well-fitted ARIMA model. This suggests that the model is unbiased on average.
+However, there seems to be considerable variability in the residuals, with some periods having higher spikes than others.
+Variance Consistency:
+The residuals show relatively consistent variance throughout the time series, which indicates that the assumption of homoscedasticity (constant variance) may hold. Any noticeable increase or clustering in variance over time would suggest issues in the model.
+
+- Extreme Values:
+There are some noticeable extreme spikes, both positive and negative, which could represent outliers in the data or periods where the model underperformed.
+
+
+## Actionable Recommendations for Stakeholders
+- Resource Allocation:
+Use the 3-month average to identify periods of high demand for diagnostic services and allocate resources accordingly (e.g., hiring more staff during peak times or increasing diagnostic capacity).
+
+- Policy Adjustments:
+Analyze the drop in 2020 to ensure contingency plans for similar disruptions in the future. Monitoring and Evaluation: Use the 12-month average to evaluate the long-term effectiveness of public health campaigns or diagnostic initiatives. 
+Public Awareness Campaigns: Focus campaigns during months of low diagnoses (as seen in the 3-month average) to address potential gaps in awareness or service access.
+
+## Sum of Cancer Diagnoses and 12-Month Moving Average by Year:
+
+- Trend Analysis: 
+The graph indicates a fluctuating pattern in the sum of cancer diagnoses, with a noticeable dip in recent years.
+
+- 12-Month Moving Average: 
+The moving average shows a smoother trend over the years, which could help identify broader patterns without being influenced by short-term fluctuations.
+
+- Insight: 
+There appears to be a significant decline in diagnoses after 2021, which could be worth investigating further, possibly to identify changes in healthcare access or diagnostic practices. A drop in diagnoses could also be due to factors such as changes in reporting, delays caused by external events like the COVID-19 pandemic, or other public health impacts.
+
+## Sum of Cancer Diagnoses by Year and Cancer Group:
+- Data Breakdown by Cancer Group: 
+This graph breaks down the cancer diagnoses by specific types (e.g., Bladder, Bone, and soft tissues). Insight: The graph shows varying trends across different cancer types. For example, Bladder cancer diagnoses seem to have the highest sum of cases in most years, while Bone and soft tissue cancers might show a smaller proportion but still demonstrate a steady increase.
+- Trend Variations: 
+The behavior of each cancer type may suggest that diagnostic patterns or healthcare responses differ across cancer groups. It would be useful to explore why certain cancers are increasing more rapidly than others or why some are declining.
+
+## Total Cancer Diagnoses by Year and Cancer Group:
+Overall Trend: This graph tracks the total cancer diagnoses over the years, which includes all cancer groups combined. The sum fluctuates but seems to exhibit a slight increase up to 2022 and then potentially stabilizing or slightly decreasing.
+Insight: The graph suggests that, despite fluctuations in the total number of diagnoses, some specific cancer groups are seeing increased numbers, while others are either stable or decreasing. This could indicate a shift in cancer types being diagnosed more frequently.
+
+## Summary:
+
+- Yearly Fluctuations: 
+Overall, there’s a visible fluctuation in the data, which could be impacted by multiple factors like changes in diagnostic practices, public health policies, or even improvements in early detection techniques.
+- Cancer Type-Specific Analysis: 
+Different cancer types have different diagnostic patterns. Identifying which cancer types are more prevalent could help guide public health initiatives or resource allocation.
+- Potential Decline: 
+The decline in diagnoses seen in the first graph should be further explored. It might indicate a broader trend related to the healthcare system or environmental factors.
+
 
 
 
