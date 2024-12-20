@@ -483,7 +483,7 @@ ORDER BY Cancer_Group, Cancer_Diagnoses;
 ## Results
 
 
-![pbit of Power BI Dashboard](assets/images/Cancer Incidence in the east of land.pbit)
+![pbit of Power BI Dashboard](assets/images/dashboard.gif)
 
 ![Dashboard](assets/images/Dashboard.png)
 
